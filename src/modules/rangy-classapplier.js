@@ -56,7 +56,12 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
     }
 
     function addClass(el, className) {
-        if (typeof el.classList == "object") {
+        if (/\s+/.test(className)) {
+            var classes = className.split(/\s+/);
+            for (var i = 0, len = classes.length; i < len; ++i) {
+                addClass(el, classes[i]);
+            }
+        } else if (typeof el.classList == "object") {
             el.classList.add(className);
         } else {
             var classNameSupported = (typeof el.className == "string");
