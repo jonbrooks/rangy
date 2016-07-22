@@ -56,7 +56,12 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
     }
 
     function addClass(el, className) {
-        if (typeof el.classList == "object") {
+        if (/\s+/.test(className)) {
+            var classes = className.split(/\s+/);
+            for (var i = 0, len = classes.length; i < len; ++i) {
+                addClass(el, classes[i]);
+            }
+        } else if (typeof el.classList == "object") {
             el.classList.add(className);
         } else {
             var classNameSupported = (typeof el.className == "string");
@@ -220,8 +225,8 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
         return text != "";
     }
 
-    function getEffectiveTextNodes(range) {
-        var nodes = range.getNodes([3]);
+    function getEffectiveTextNodes(range, filter) {
+        var nodes = range.getNodes([3], filter);
 
         // Optimization as per issue 145
 
@@ -514,7 +519,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
     };
 
     var optionProperties = ["elementTagName", "ignoreWhiteSpace", "applyToEditableOnly", "useExistingElements",
-        "removeEmptyElements", "onElementCreate"];
+        "removeEmptyElements", "onElementCreate", "nodeFilter"];
 
     // TODO: Populate this with every attribute name that corresponds to a property with a different name. Really??
     var attrNamesForProperties = {};
@@ -913,7 +918,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                 applier.removeEmptyContainers(range);
             }
 
-            var textNodes = getEffectiveTextNodes(range);
+            var textNodes = getEffectiveTextNodes(range, applier.nodeFilter);
 
             if (textNodes.length) {
                 forEach(textNodes, function(textNode) {
@@ -977,7 +982,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                 applier.removeEmptyContainers(range, positionsToPreserve);
             }
 
-            var textNodes = getEffectiveTextNodes(range);
+            var textNodes = getEffectiveTextNodes(range, applier.nodeFilter);
             var textNode, ancestorWithClass;
             var lastTextNode = textNodes[textNodes.length - 1];
 
