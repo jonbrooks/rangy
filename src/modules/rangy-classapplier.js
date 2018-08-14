@@ -823,8 +823,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                     textNodeParent.insertBefore(el, textNode);
                     el.appendChild(textNode);
                     if (indexPosition === lastNodePosition && lastNodePosition === 0) {
-                        addClass(el, 'annotation-start');
-                        addClass(el, 'annotation-end');
+                        addClass(el, 'annotation-start-end');
                     } else if (indexPosition === 0) {
                         addClass(el, 'annotation-start');
                     } else if (indexPosition === lastNodePosition) {
