@@ -519,7 +519,8 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
     };
 
     var optionProperties = ["elementTagName", "ignoreWhiteSpace", "applyToEditableOnly", "useExistingElements",
-        "removeEmptyElements", "onElementCreate", "nodeFilter"];
+        "removeEmptyElements", "onElementCreate", "nodeFilter", "startElementClass", "endElementClass",
+        "middleElementClass", "startEndElementClass"];
 
     // TODO: Populate this with every attribute name that corresponds to a property with a different name. Really??
     var attrNamesForProperties = {};
@@ -827,13 +828,13 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                 }
 
                 if (indexPosition === lastNodePosition && lastNodePosition === 0) {
-                    addClass(parent, 'annotation-start-end');
+                    addClass(parent, this.startEndElementClass);
                 } else if (indexPosition === 0) {
-                    addClass(parent, 'annotation-start');
+                    addClass(parent, this.startElementClass);
                 } else if (indexPosition === lastNodePosition) {
-                    addClass(parent, 'annotation-end');
+                    addClass(parent, this.endElementClass);
                 } else {
-                    addClass(parent, 'annotation-middle');
+                    addClass(parent, this.middleElementClass);
                 }
             }
 
