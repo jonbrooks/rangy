@@ -828,13 +828,13 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                 }
 
                 if (indexPosition === lastNodePosition && lastNodePosition === 0) {
-                    addClass(parent, this.startEndElementClass);
+                    addClass(parent, this.startEndElementClass || "");
                 } else if (indexPosition === 0) {
-                    addClass(parent, this.startElementClass);
+                    addClass(parent, this.startElementClass || "");
                 } else if (indexPosition === lastNodePosition) {
-                    addClass(parent, this.endElementClass);
+                    addClass(parent, this.endElementClass || "");
                 } else {
-                    addClass(parent, this.middleElementClass);
+                    addClass(parent, this.middleElementClass || "");
                 }
             }
 
