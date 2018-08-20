@@ -810,6 +810,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
             // should not be styled. See issue 283.
             if (canTextBeStyled(textNode)) {
                 var parent = textNode.parentNode;
+
                 if (parent.childNodes.length == 1 &&
                     this.useExistingElements &&
                     this.appliesToElement(parent) &&
@@ -819,18 +820,20 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                     addClass(parent, this.className);
                 } else {
                     var textNodeParent = textNode.parentNode;
-                    var el = this.createContainer(textNodeParent);
-                    textNodeParent.insertBefore(el, textNode);
-                    el.appendChild(textNode);
-                    if (indexPosition === lastNodePosition && lastNodePosition === 0) {
-                        addClass(el, 'annotation-start-end');
-                    } else if (indexPosition === 0) {
-                        addClass(el, 'annotation-start');
-                    } else if (indexPosition === lastNodePosition) {
-                        addClass(el, 'annotation-end');
-                    } else {
-                        addClass(el, 'annotation-middle');
-                    }
+                    parent = this.createContainer(textNodeParent);
+                    textNodeParent.insertBefore(parent, textNode);
+                    parent.appendChild(textNode);
+
+                }
+
+                if (indexPosition === lastNodePosition && lastNodePosition === 0) {
+                    addClass(parent, 'annotation-start-end');
+                } else if (indexPosition === 0) {
+                    addClass(parent, 'annotation-start');
+                } else if (indexPosition === lastNodePosition) {
+                    addClass(parent, 'annotation-end');
+                } else {
+                    addClass(parent, 'annotation-middle');
                 }
             }
 
