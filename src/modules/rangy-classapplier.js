@@ -519,7 +519,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
     };
 
     var optionProperties = ["elementTagName", "ignoreWhiteSpace", "applyToEditableOnly", "useExistingElements",
-        "removeEmptyElements", "onElementCreate", "nodeFilter"];
+        "removeEmptyElements", "onElementCreate", "nodeFilter", "elementPostProcessCallback"];
 
     // TODO: Populate this with every attribute name that corresponds to a property with a different name. Really??
     var attrNamesForProperties = {};
@@ -802,7 +802,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
             });
         },
 
-        applyToTextNode: function(textNode, positionsToPreserve) {
+        applyToTextNode: function(textNode, positionsToPreserve, indexPosition, lastNodePosition) {
             log.group("Apply class '" + this.className + "'. textNode: " + textNode.data);
             log.info("Apply class  '" + this.className + "'. textNode: " + textNode.data);
 
@@ -810,6 +810,7 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
             // should not be styled. See issue 283.
             if (canTextBeStyled(textNode)) {
                 var parent = textNode.parentNode;
+
                 if (parent.childNodes.length == 1 &&
                     this.useExistingElements &&
                     this.appliesToElement(parent) &&
@@ -819,9 +820,14 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
                     addClass(parent, this.className);
                 } else {
                     var textNodeParent = textNode.parentNode;
-                    var el = this.createContainer(textNodeParent);
-                    textNodeParent.insertBefore(el, textNode);
-                    el.appendChild(textNode);
+                    parent = this.createContainer(textNodeParent);
+                    textNodeParent.insertBefore(parent, textNode);
+                    parent.appendChild(textNode);
+
+                }
+
+                if (this.elementPostProcessCallback) {
+                    this.elementPostProcessCallback(parent, indexPosition, lastNodePosition);
                 }
             }
 
@@ -921,11 +927,12 @@ rangy.createModule("ClassApplier", ["WrappedSelection"], function(api, module) {
             var textNodes = getEffectiveTextNodes(range, applier.nodeFilter);
 
             if (textNodes.length) {
-                forEach(textNodes, function(textNode) {
+                var lastNodePosition = textNodes.length - 1;
+                forEach(textNodes, function(textNode, i) {
                     log.info("textnode " + textNode.data + " is ignorable: " + applier.isIgnorableWhiteSpaceNode(textNode));
                     if (!applier.isIgnorableWhiteSpaceNode(textNode) && !applier.getSelfOrAncestorWithClass(textNode) &&
                             applier.isModifiable(textNode)) {
-                        applier.applyToTextNode(textNode, positionsToPreserve);
+                        applier.applyToTextNode(textNode, positionsToPreserve, i, lastNodePosition);
                     }
                 });
                 var lastTextNode = textNodes[textNodes.length - 1];
